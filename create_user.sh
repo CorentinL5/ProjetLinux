@@ -3,6 +3,8 @@
 # Usage : ./create_user.sh <username> <password> <ip>
 # Ex: ./create_user.sh client42 superpass 10.42.0.94
 
+MYSQL_ROOT_PWD='ptZfQ99wHYeIoUJfubigMg=='
+
 if [ $# -ne 3 ]; then
   echo "Usage: $0 <username> <password> <ip>"
   exit 1
@@ -30,11 +32,10 @@ sudo useradd -d "$USERROOT" -s /sbin/nologin "$USER"
 echo "$USER:$PASS" | sudo chpasswd
 
 echo "[+] Création des dossiers"
-sudo mkdir -p "$WEBROOT"
-sudo mkdir -p "$USERROOT/data"
+sudo mkdir -p "$WEBROOT" "$USERROOT/data"
 sudo chown -R $USER:$USER "$USERROOT"
 
-# 2. Appliquer quota utilisateur : 25 Mo (blocs 1K)
+# 2. Appliquer quota utilisateur : 25 Mo
 echo "[+] Application du quota de 25 Mo"
 if mount | grep -q '/srv/clients'; then
   sudo setquota -u $USER 25600 25600 0 0 /srv/clients || echo "[!] Échec quota : quota peut ne pas être activé"
@@ -44,19 +45,37 @@ fi
 
 # 3. Web (Apache)
 echo "[+] Configuration Apache"
-echo "<h1>Bienvenue $USER</h1>" | sudo tee "$WEBROOT/index.html" > /dev/null
+
+# Créer page d’accueil personnalisée
+sudo tee "$WEBROOT/index.html" > /dev/null <<< "<h1>Bienvenue $USER</h1>"
+
+# Appliquer les droits de fichiers
 sudo chown -R apache:apache "$WEBROOT"
+sudo chmod -R 755 "$WEBROOT"
+sudo chmod 644 "$WEBROOT/index.html"
+
+# Corriger les permissions des dossiers parents pour Apache
+sudo chmod o+x /srv
+sudo chmod o+x /srv/clients
+sudo chmod o+x "$USERROOT"
+
+# Créer le VirtualHost Apache
 sudo tee /etc/httpd/conf.d/$USER.conf > /dev/null <<EOF
 <VirtualHost *:80>
     ServerName $DOMAIN
     DocumentRoot $WEBROOT
+
     <Directory $WEBROOT>
         AllowOverride All
         Require all granted
     </Directory>
 </VirtualHost>
 EOF
+
+# Recharger Apache
 sudo systemctl reload httpd
+echo "[✓] Apache rechargé"
+
 
 # 4. FTP
 echo "[+] Préparation FTP"
@@ -84,20 +103,22 @@ echo "$USER IN A $IP"
 
 # 7. MariaDB/MySQL
 echo "[+] Création base de données"
-sudo mysql -e "CREATE DATABASE $DB_NAME;"
-sudo mysql -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
-sudo mysql -e "FLUSH PRIVILEGES;"
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "CREATE DATABASE $DB_NAME;"
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "FLUSH PRIVILEGES;"
 
 # 8. Fichier de sortie
 INFO_FILE="$USERROOT/your_account.txt"
-echo "Nom d'utilisateur : $USER" | sudo tee "$INFO_FILE"
-echo "Mot de passe FTP/Samba : $PASS" | sudo tee -a "$INFO_FILE"
-echo "Web : http://$DOMAIN" | sudo tee -a "$INFO_FILE"
-echo "FTP : ftp://$IP" | sudo tee -a "$INFO_FILE"
-echo "Samba : \\\\$IP\\$USER" | sudo tee -a "$INFO_FILE"
-echo "Base de données : $DB_NAME" | sudo tee -a "$INFO_FILE"
-echo "Utilisateur DB : $DB_USER" | sudo tee -a "$INFO_FILE"
-echo "Mot de passe DB : $DB_PASS" | sudo tee -a "$INFO_FILE"
+{
+  echo "Nom d'utilisateur : $USER"
+  echo "Mot de passe FTP/Samba : $PASS"
+  echo "Web : http://$DOMAIN"
+  echo "FTP : ftp://$IP"
+  echo "Samba : \\\\$IP\\$USER"
+  echo "Base de données : $DB_NAME"
+  echo "Utilisateur DB : $DB_USER"
+  echo "Mot de passe DB : $DB_PASS"
+} | sudo tee "$INFO_FILE"
 
 echo "[✓] $USER prêt. Espace web : $WEBROOT"

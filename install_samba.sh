@@ -2,7 +2,7 @@
 
 set -e
 echo "[SAMBA] Installation de Samba"
-sudo dnf install -y samba samba-common
+sudo dnf install -y samba samba-common-tools
 
 echo "[SAMBA] Configuration du répertoire partagé"
 SHARE_PATH="/srv/share"

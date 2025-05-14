@@ -16,7 +16,7 @@ sudo systemctl enable --now mariadb
 
 echo "[MariaDB] Attente du lancement complet"
 sleep 1
-until sudo mariadb -e "SELECT 1;" &>/dev/null; do
+until sudo mysql -e "SELECT 1;" &>/dev/null; do
   echo "[MariaDB] En attente du service..."
   sleep 1
 done
@@ -24,21 +24,21 @@ done
 echo "[MariaDB] Sécurisation automatique..."
 
 # Supprimer les utilisateurs anonymes
-sudo mariadb -e "DELETE FROM mysql.user WHERE User='';"
+sudo mysql -e "DELETE FROM mysql.user WHERE User='';"
 
 # Supprimer les accès root distants
-sudo mariadb -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+sudo mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 
 # Supprimer la base de test
-sudo mariadb -e "DROP DATABASE IF EXISTS test;"
-sudo mariadb -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
+sudo mysql -e "DROP DATABASE IF EXISTS test;"
+sudo mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
 
 # Appliquer les changements
-sudo mariadb -e "FLUSH PRIVILEGES;"
+sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Définir un mot de passe root (généré automatiquement)
 ROOTPWD=$(openssl rand -base64 16)
-sudo mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOTPWD}';"
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOTPWD}';"
 
 # Sauvegarder le mot de passe root dans un fichier root-only
 echo "$ROOTPWD" | sudo tee /root/.mariadb_root_pass > /dev/null

@@ -2,25 +2,109 @@
 
 set -e
 
-echo "=== [1] Installation DNS ==="
-bash install_dns.sh
+main_menu() {
+  while true; do
+    clear
+    echo "========== 🌐 MASTER CONFIG MENU =========="
+    echo "1) ⚡ Installation complète (tout configurer)"
+    echo "2) 🔧 Installation manuelle (par service)"
+    echo "3) 👤 Gestion des utilisateurs clients"
+    echo "q) ❌ Quitter"
+    echo "=========================================="
+    read -p "Choix : " main_choice
 
-echo "=== [2] Installation Serveur Web ==="
-bash install_web.sh
+    case $main_choice in
+      1) full_setup ;;
+      2) service_menu ;;
+      3) user_menu ;;
+      q|Q) echo "👋 À bientôt !"; exit 0 ;;
+      *) echo "Choix invalide. Entrée pour continuer..."; read ;;
+    esac
+  done
+}
 
-echo "=== [3] Installation FTP ==="
-bash install_ftp.sh
+full_setup() {
+  echo "[SETUP COMPLET] ➤ Lancement de toutes les installations..."
+  bash install_lvm.sh
+  bash install_web.sh
+  bash install_mariadb.sh
+  bash install_dns.sh
+  bash install_ntp.sh
+  bash install_nfs.sh
+  bash install_samba.sh
+  bash install_ftp.sh
+  bash fix_vsftpd.sh
+  bash fix_web.sh
+  bash install_monitoring.sh
+  echo "[SETUP COMPLET] ✔️ Terminé"
+  read -p "Appuyez sur Entrée pour revenir au menu..."
+}
 
-echo "=== [4] Installation Samba ==="
-bash install_samba.sh
+service_menu() {
+  while true; do
+    clear
+    echo "===== 🔧 INSTALLATION MANUELLE PAR SERVICE ====="
+    echo "1) LVM et quotas"
+    echo "2) Apache + PHP"
+    echo "3) MariaDB"
+    echo "4) DNS"
+    echo "5) NTP"
+    echo "6) NFS"
+    echo "7) Samba"
+    echo "8) vsftpd"
+    echo "9) Corriger vsftpd"
+    echo "10) Corriger Apache"
+    echo "11) Monitoring (Netdata)"
+    echo "q) Retour"
+    echo "==============================================="
+    read -p "Choix : " s
 
-echo "=== [5] Installation MariaDB ==="
-bash install_mariadb.sh
+    case $s in
+      1) bash install_lvm.sh ;;
+      2) bash install_web.sh ;;
+      3) bash install_mariadb.sh ;;
+      4) bash install_dns.sh ;;
+      5) bash install_ntp.sh ;;
+      6) bash install_nfs.sh ;;
+      7) bash install_samba.sh ;;
+      8) bash install_ftp.sh ;;
+      9) bash fix_vsftpd.sh ;;
+      10) bash fix_web.sh ;;
+      11) bash install_monitoring.sh ;;
+      q|Q) break ;;
+      *) echo "Choix invalide. Entrée pour continuer..."; read ;;
+    esac
+  done
+}
 
-echo "=== [6] Installation NTP ==="
-bash install_ntp.sh
+user_menu() {
+  while true; do
+    clear
+    echo "===== 👤 GESTION UTILISATEURS CLIENTS ====="
+    echo "1) ➕ Créer un utilisateur"
+    echo "2) ➖ Supprimer un utilisateur"
+    echo "3) 📄 Lister les utilisateurs"
+    echo "q) Retour"
+    echo "=========================================="
+    read -p "Choix : " u
 
-echo "=== [7] Installation Monitoring ==="
-bash install_monitoring.sh
+    case $u in
+      1)
+        read -p "Nom utilisateur : " user
+        read -p "Mot de passe : " pass
+        read -p "Adresse IP : " ip
+        bash create_user.sh "$user" "$pass" "$ip"
+        ;;
+      2)
+        read -p "Nom utilisateur à supprimer : " user
+        bash delete_user.sh "$user"
+        ;;
+      3) bash list_users.sh ;;
+      q|Q) break ;;
+      *) echo "Choix invalide. Entrée pour continuer..."; read ;;
+    esac
+  done
+}
 
-echo "=== ✔️ Tous les services sont installés ==="
+# Lancer le menu principal
+main_menu

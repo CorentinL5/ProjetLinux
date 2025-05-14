@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# delete_user.sh <username>
-# Supprime proprement un utilisateur : Linux, base de données, FTP, Samba, fichiers
+# Usage : ./delete_user.sh <username>
+# Supprime proprement un utilisateur : Linux, base de données, FTP, Samba, Apache, fichiers
+
+MYSQL_ROOT_PWD='ptZfQ99wHYeIoUJfubigMg=='
 
 set -e
 
@@ -16,29 +18,36 @@ DB_USER="${USER}_dbuser"
 USERROOT="/srv/clients/$USER"
 APACHE_CONF="/etc/httpd/conf.d/$USER.conf"
 
+# 1. Base de données
 echo "[−] Suppression de la base de données"
-sudo mariadb -e "DROP DATABASE IF EXISTS $DB_NAME;"
-sudo mariadb -e "DROP USER IF EXISTS '$DB_USER'@'localhost';"
-sudo mariadb -e "FLUSH PRIVILEGES;"
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "DROP DATABASE IF EXISTS $DB_NAME;" || true
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "DROP USER IF EXISTS '$DB_USER'@'localhost';" || true
+sudo mysql -uroot -p"$MYSQL_ROOT_PWD" -e "FLUSH PRIVILEGES;" || true
 
+# 2. Dossier
 echo "[−] Suppression du dossier $USERROOT"
 sudo rm -rf "$USERROOT"
 
+# 3. Utilisateur système
 echo "[−] Suppression de l'utilisateur Linux"
-sudo userdel -r "$USER" || true
+sudo userdel -r "$USER" 2>/dev/null || true
 
+# 4. Quota
 echo "[−] Suppression du quota"
 sudo setquota -u $USER 0 0 0 0 /srv/clients || true
 
+# 5. Apache
 echo "[−] Suppression de la config Apache"
 sudo rm -f "$APACHE_CONF"
 sudo systemctl reload httpd
 
+# 6. FTP
 echo "[−] Suppression de l'entrée FTP"
 sudo sed -i "/^$USER$/d" /etc/vsftpd/user_list
 
+# 7. Samba
 echo "[−] Suppression de l'entrée Samba"
-sudo smbpasswd -x $USER || true
+sudo smbpasswd -x $USER 2>/dev/null || true
 sudo sed -i "/\\[$USER\\]/,+6d" /etc/samba/smb.conf
 sudo systemctl restart smb nmb
 
