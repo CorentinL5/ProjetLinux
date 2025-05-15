@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+cd "$(dirname "$0")"
+
 # Demande une fois l'IP du serveur
 read -p "🔧 IP de ce serveur (ex: 10.42.0.52) : " SERVEUR_IP
 read -p "🌐 Nom de domaine (ex: projet.heh) : " DOMAIN
@@ -57,7 +59,7 @@ full_setup() {
   bash install_ftp.sh
   bash fix_vsftpd.sh
   bash fix_web.sh
-  bash install_monitoring.sh
+  bash install_monitoring.sh "$ROLE"
   bash install_crontab.sh
   bash install_backup.sh
   bash install_phpmyadmin.sh
@@ -102,7 +104,7 @@ service_menu() {
       9) bash install_ftp.sh ;;
       10) bash fix_vsftpd.sh ;;
       11) bash fix_web.sh ;;
-      12) bash install_monitoring.sh ;;
+      12) bash install_monitoring.sh "$ROLE" ;;
       13) bash install_crontab.sh ;;
       14) bash install_backup.sh ;;
       15) bash install_phpmyadmin.sh ;;

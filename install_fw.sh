@@ -2,6 +2,7 @@
 
 set -e
 echo "[FIREWALL] ➤ Activation de firewall-cmd (Firewalld)"
+sudo dnf install -y firewalld
 sudo systemctl enable --now firewalld
 
 echo "[FIREWALL] ➤ Ouverture des ports standards"
