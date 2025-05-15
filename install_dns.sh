@@ -121,7 +121,6 @@ if ! grep -q "${DOMAIN}" /etc/resolv.conf; then
 nameserver 127.0.0.1
 search ${DOMAIN}
 EOF
-  chattr +i /etc/resolv.conf
 fi
 
 echo "[✓] DNS serveur ${DOMAIN} prêt sur ${DNS_IP}"
