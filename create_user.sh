@@ -5,8 +5,8 @@
 
 MYSQL_ROOT_PWD='ptZfQ99wHYeIoUJfubigMg=='
 
-if [ $# -ne 3 ]; then
-  echo "Usage: $0 <username> <password> <ip>"
+if [ $# -ne 4 ]; then
+  echo "Usage: $0 <username> <password> <ip> <domain>"
   exit 1
 fi
 
