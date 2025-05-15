@@ -50,7 +50,7 @@ full_setup() {
   echo "[SETUP COMPLET] ➤ Lancement de toutes les installations..."
   bash install_lvm.sh
   bash install_fw.sh
-  bash install_web.sh
+  bash install_web.sh "$DOMAIN"
   bash install_mariadb.sh
   bash install_dns.sh "$SERVEUR_IP" "$DOMAIN"
   bash install_ntp.sh
@@ -95,7 +95,7 @@ service_menu() {
     case $s in
       1) bash install_lvm.sh ;;
       2) bash install_fw.sh ;;
-      3) bash install_web.sh ;;
+      3) bash install_web.sh "$DOMAIN" ;;
       4) bash install_mariadb.sh ;;
       5) bash install_dns.sh "$SERVEUR_IP" "$DOMAIN" ;;
       6) bash install_ntp.sh ;;
