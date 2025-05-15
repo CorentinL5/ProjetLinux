@@ -15,4 +15,4 @@ sudo chmod +x /opt/ProjetLinux/*.sh
 
 echo "[CONFIG] ➤ Lancement du menu principal"
 cd /opt/ProjetLinux
-sudo ./master_install.sh
+sudo /opt/ProjetLinux/master_install.sh
