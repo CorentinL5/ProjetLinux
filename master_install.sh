@@ -110,7 +110,7 @@ service_menu() {
       15) bash install_phpmyadmin.sh ;;
       16) bash install_antivirus.sh ;;
       q|Q) break ;;
-      *) echo "Choix invalide. Entrée pour continuer..."; read ;;
+      *) echo "Choix invalide. Entrée pour continuer..."; read -p "" ;;
     esac
   done
 }
@@ -131,14 +131,18 @@ user_menu() {
         read -p "Nom utilisateur : " user
         read -p "Mot de passe : " pass
         bash create_user.sh "$user" "$pass" "$SERVEUR_IP" "$DOMAIN"
+        read -p "Appuyez sur Entrée pour retourner au menu..."
         ;;
       2)
         read -p "Nom utilisateur à supprimer : " user
         bash delete_user.sh "$user"
+        read -p "Appuyez sur Entrée pour retourner au menu..."
         ;;
-      3) bash list_users.sh ;;
+      3) bash list_users.sh
+        read -p "Appuyez sur Entrée pour retourner au menu..."
+        ;;
       q|Q) break ;;
-      *) echo "Choix invalide. Entrée pour continuer..."; read ;;
+      *) echo "Choix invalide. Entrée pour continuer..."; read -p "" ;;
     esac
   done
 }
