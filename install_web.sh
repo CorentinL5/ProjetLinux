@@ -9,7 +9,7 @@ if [ -z "$DOMAIN" ]; then
 fi
 
 echo "[WEB] ➤ Installation d'Apache"
-sudo dnf install -y httpd
+sudo dnf install -y httpd httpd-core httpd-filesystem
 
 echo "[WEB] ➤ Installation de PHP et des modules"
 sudo dnf install -y php php-cli php-common php-mysqlnd php-gd php-opcache php-mbstring php-pdo php-fpm php-json mod_php
