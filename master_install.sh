@@ -26,6 +26,7 @@ main_menu() {
 full_setup() {
   echo "[SETUP COMPLET] ➤ Lancement de toutes les installations..."
   bash install_lvm.sh
+  bash install_fw.sh
   bash install_web.sh
   bash install_mariadb.sh
   bash install_dns.sh
@@ -45,32 +46,34 @@ service_menu() {
     clear
     echo "===== 🔧 INSTALLATION MANUELLE PAR SERVICE ====="
     echo "1) LVM et quotas"
-    echo "2) Apache + PHP"
-    echo "3) MariaDB"
-    echo "4) DNS"
-    echo "5) NTP"
-    echo "6) NFS"
-    echo "7) Samba"
-    echo "8) vsftpd"
-    echo "9) Corriger vsftpd"
-    echo "10) Corriger Apache"
-    echo "11) Monitoring (Netdata)"
+    echo "2) Firewall"
+    echo "3) Apache + PHP"
+    echo "4) MariaDB"
+    echo "5) DNS"
+    echo "6) NTP"
+    echo "7) NFS"
+    echo "8) Samba"
+    echo "9) vsftpd"
+    echo "10) Corriger vsftpd"
+    echo "11) Corriger Apache"
+    echo "12) Monitoring (Netdata)"
     echo "q) Retour"
     echo "==============================================="
     read -p "Choix : " s
 
     case $s in
       1) bash install_lvm.sh ;;
-      2) bash install_web.sh ;;
-      3) bash install_mariadb.sh ;;
-      4) bash install_dns.sh ;;
-      5) bash install_ntp.sh ;;
-      6) bash install_nfs.sh ;;
-      7) bash install_samba.sh ;;
-      8) bash install_ftp.sh ;;
-      9) bash fix_vsftpd.sh ;;
-      10) bash fix_web.sh ;;
-      11) bash install_monitoring.sh ;;
+      2) bash install_fw.sh ;;
+      3) bash install_web.sh ;;
+      4) bash install_mariadb.sh ;;
+      5) bash install_dns.sh ;;
+      6) bash install_ntp.sh ;;
+      7) bash install_nfs.sh ;;
+      8) bash install_samba.sh ;;
+      9) bash install_ftp.sh ;;
+      10) bash fix_vsftpd.sh ;;
+      11) bash fix_web.sh ;;
+      12) bash install_monitoring.sh ;;
       q|Q) break ;;
       *) echo "Choix invalide. Entrée pour continuer..."; read ;;
     esac
