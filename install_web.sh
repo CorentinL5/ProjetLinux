@@ -1,6 +1,11 @@
 #!/bin/bash
 
 set -e
+
+
+
+DOMAIN="$1"
+
 echo "[WEB] ➤ Installation d'Apache"
 sudo dnf install -y httpd
 
@@ -38,10 +43,10 @@ sudo tee /var/www/html/index.php > /dev/null <<'EOF'
 EOF
 
 
-echo "[WEB] ➤ Création du VirtualHost pour projet.heh (prioritaire)"
+echo "[WEB] ➤ Création du VirtualHost pour $DOMAIN (prioritaire)"
 sudo tee /etc/httpd/conf.d/000-default.conf > /dev/null <<EOF
 <VirtualHost *:80>
-    ServerName projet.heh
+    ServerName $DOMAIN
     DocumentRoot /var/www/html
 
     <Directory /var/www/html>
@@ -54,4 +59,4 @@ EOF
 echo "[WEB] ➤ Redémarrage d'Apache"
 sudo systemctl restart httpd
 
-echo "[WEB] ✔️ Apache prêt avec VirtualHost http://projet.heh (vers /var/www/html)"
+echo "[WEB] ✔️ Apache prêt avec VirtualHost http://$DOMAIN (vers /var/www/html)"

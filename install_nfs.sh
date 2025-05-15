@@ -1,10 +1,13 @@
 #!/bin/bash
 
 set -e
+
+SHARE_PATH="$1"
+
+
 echo "[NFS] Installation des outils NFS"
 sudo dnf install -y nfs-utils
 
-SHARE_PATH="/srv/share"
 echo "[NFS] Configuration du répertoire partagé : $SHARE_PATH"
 sudo mkdir -p $SHARE_PATH
 sudo chown nobody:nobody $SHARE_PATH

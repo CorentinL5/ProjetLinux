@@ -1,11 +1,13 @@
 #!/bin/bash
 
 set -e
+
+SHARE_PATH="$1"
+
 echo "[SAMBA] Installation de Samba"
 sudo dnf install -y samba samba-common-tools
 
 echo "[SAMBA] Configuration du répertoire partagé"
-SHARE_PATH="/srv/share"
 sudo mkdir -p $SHARE_PATH
 sudo chown -R nobody:nobody $SHARE_PATH
 sudo chmod 2775 $SHARE_PATH

@@ -13,7 +13,8 @@ fi
 USER="$1"
 PASS="$2"
 IP="$3"
-DOMAIN="$USER.projet.heh"
+DOMAIN="$4"
+USERDOMAIN="$USER.$DOMAIN"
 USERROOT="/srv/clients/$USER"
 WEBROOT="$USERROOT/www"
 DB_NAME="${USER}_db"
@@ -62,7 +63,7 @@ sudo chmod o+x "$USERROOT"
 # Créer le VirtualHost Apache
 sudo tee /etc/httpd/conf.d/$USER.conf > /dev/null <<EOF
 <VirtualHost *:80>
-    ServerName $DOMAIN
+    ServerName $USERDOMAIN
     DocumentRoot $WEBROOT
 
     <Directory $WEBROOT>
@@ -113,7 +114,7 @@ INFO_FILE="$USERROOT/your_account.txt"
 {
   echo "Nom d'utilisateur : $USER"
   echo "Mot de passe FTP/Samba : $PASS"
-  echo "Web : http://$DOMAIN"
+  echo "Web : http://$USERDOMAIN"
   echo "FTP : ftp://$IP"
   echo "Samba : \\\\$IP\\$USER"
   echo "Base de données : $DB_NAME"

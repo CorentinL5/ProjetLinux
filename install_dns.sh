@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # Script d'installation et configuration d'un serveur DNS local (BIND) pour Amazon Linux 2023
-# Domaine : projet.heh | IP serveur : 10.42.0.52
 
 set -e
 
-DNS_IP="10.42.0.52"
-DOMAIN="projet.heh"
+DNS_IP="$1"
+DOMAIN="$2"
 REVERSE_ZONE="52.0.42.10.in-addr.arpa"
 
 # Vérification root
