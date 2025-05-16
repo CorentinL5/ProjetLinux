@@ -48,7 +48,9 @@ sudo sed -i "/^$USER$/d" /etc/vsftpd/user_list
 # 7. Samba
 echo "[−] Suppression de l'entrée Samba"
 sudo smbpasswd -x $USER 2>/dev/null || true
-sudo sed -i "/\\[$USER\\]/,+6d" /etc/samba/smb.conf
+if grep -q "^\[$USER\]" /etc/samba/smb.conf; then
+  sudo sed -i "/^\[$USER\]/,/^\[/d" /etc/samba/smb.conf
+fi
 sudo systemctl restart smb nmb
 
 echo "[✓] $USER supprimé proprement."
