@@ -8,9 +8,9 @@ echo "[SAMBA] Installation de Samba"
 sudo dnf install -y samba samba-common-tools
 
 echo "[SAMBA] Configuration du répertoire partagé"
-sudo mkdir -p $SHARE_PATH
-sudo chown -R nobody:nobody $SHARE_PATH
-sudo chmod 2775 $SHARE_PATH
+sudo mkdir -p "$SHARE_PATH"
+sudo chown -R nobody:nobody "$SHARE_PATH"
+sudo chmod 2775 "$SHARE_PATH"
 
 echo "[SAMBA] Sauvegarde de smb.conf"
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak

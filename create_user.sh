@@ -51,12 +51,12 @@ echo "$USER:$PASS" | sudo chpasswd
 
 echo "[+] Création des dossiers"
 sudo mkdir -p "$WEBROOT" "$USERROOT/data"
-sudo chown -R $USER:$USER "$USERROOT"
+sudo chown -R "$USER":"$USER" "$USERROOT"
 
 # 2. Appliquer quota utilisateur : 25 Mo
 echo "[+] Application du quota de 25 Mo"
 if mount | grep -q '/srv/clients'; then
-  sudo setquota -u $USER 25600 25600 0 0 /srv/clients || echo "[!] Échec quota : quota peut ne pas être activé"
+  sudo setquota -u "$USER" 25600 25600 0 0 /srv/clients || echo "[!] Échec quota : quota peut ne pas être activé"
 else
   echo "[!] Avertissement : /srv/clients n'est pas monté avec quotas. (Quota non appliqué)"
 fi
@@ -78,7 +78,7 @@ sudo chmod o+x /srv/clients
 sudo chmod o+x "$USERROOT"
 
 # Créer le VirtualHost Apache
-sudo tee /etc/httpd/conf.d/$USERCONF > /dev/null <<EOF
+sudo tee /etc/httpd/conf.d/"$USERCONF" > /dev/null <<EOF
 <VirtualHost *:80>
     ServerName $USERDOMAIN
     DocumentRoot $WEBROOT
@@ -98,7 +98,7 @@ echo "[✓] Apache rechargé"
 # 4. FTP
 echo "[+] Préparation FTP"
 echo "$USER" | sudo tee -a /etc/vsftpd/user_list > /dev/null
-sudo chown $USER:$USER "$WEBROOT"
+sudo chown "$USER":"$USER" "$WEBROOT"
 
 # 5. SAMBA
 echo "[+] Préparation Samba"
@@ -111,8 +111,8 @@ sudo tee -a /etc/samba/smb.conf > /dev/null <<EOF
    guest ok = no
    valid users = $USER
 EOF
-(echo "$PASS"; echo "$PASS") | sudo smbpasswd -a $USER
-sudo smbpasswd -e $USER
+(echo "$PASS"; echo "$PASS") | sudo smbpasswd -a "$USER"
+sudo smbpasswd -e "$USER"
 sudo systemctl restart smb nmb
 
 # 6. DNS (manuel)

@@ -64,7 +64,7 @@ zone "${REVERSE_ZONE}" IN {
 EOF
 
 echo "[DNS] ➤ Création de /var/named/forward.${DOMAIN}"
-cat > /var/named/forward.${DOMAIN} <<EOF
+cat > /var/named/forward."${DOMAIN}" <<EOF
 \$TTL 86400
 @   IN  SOA     ns1.${DOMAIN}. admin.${DOMAIN}. (
         2023051301  ; Serial
@@ -80,7 +80,7 @@ EOF
 
 echo "[DNS] ➤ Création de /var/named/reverse.${DOMAIN}"
 PTR_LAST_OCTET=$(echo "$DNS_IP" | awk -F. '{print $4}')
-cat > /var/named/reverse.${DOMAIN} <<EOF
+cat > /var/named/reverse."${DOMAIN}" <<EOF
 \$TTL 86400
 @   IN  SOA     ns1.${DOMAIN}. admin.${DOMAIN}. (
         2023051301
@@ -93,8 +93,8 @@ cat > /var/named/reverse.${DOMAIN} <<EOF
 ${PTR_LAST_OCTET} IN  PTR     ns1.${DOMAIN}.
 EOF
 
-chown named:named /var/named/forward.${DOMAIN}
-chown named:named /var/named/reverse.${DOMAIN}
+chown named:named /var/named/forward."${DOMAIN}"
+chown named:named /var/named/reverse."${DOMAIN}"
 
 echo "[DNS] ➤ Firewall : ouverture du port 53"
 firewall-cmd --permanent --add-port=53/udp
@@ -106,12 +106,12 @@ systemctl enable --now named
 
 echo "[DNS] ➤ Vérification des fichiers de zone"
 named-checkconf
-named-checkzone "${DOMAIN}" /var/named/forward.${DOMAIN}
-named-checkzone "${REVERSE_ZONE}" /var/named/reverse.${DOMAIN}
+named-checkzone "${DOMAIN}" /var/named/forward."${DOMAIN}"
+named-checkzone "${REVERSE_ZONE}" /var/named/reverse."${DOMAIN}"
 
 echo "[DNS] ➤ Test dig"
-dig @127.0.0.1 ns1.${DOMAIN}
-dig @127.0.0.1 -x ${DNS_IP}
+dig @127.0.0.1 ns1."${DOMAIN}"
+dig @127.0.0.1 -x "${DNS_IP}"
 
 # Optionnel : résolv.conf local
 if ! grep -q "${DOMAIN}" /etc/resolv.conf; then

@@ -34,7 +34,7 @@ sudo userdel -r "$USER" 2>/dev/null || true
 
 # 4. Quota
 echo "[−] Suppression du quota"
-sudo setquota -u $USER 0 0 0 0 /srv/clients || true
+sudo setquota -u "$USER" 0 0 0 0 /srv/clients || echo "[!] Échec quota : quota peut ne pas être activé"
 
 # 5. Apache
 echo "[−] Suppression de la config Apache"
@@ -47,7 +47,7 @@ sudo sed -i "/^$USER$/d" /etc/vsftpd/user_list
 
 # 7. Samba
 echo "[−] Suppression de l'entrée Samba"
-sudo smbpasswd -x $USER 2>/dev/null || true
+sudo smbpasswd -x "$USER" 2>/dev/null || true
 if grep -q "^\[$USER\]" /etc/samba/smb.conf; then
   sudo sed -i "/^\[$USER\]/,/^\[/d" /etc/samba/smb.conf
 fi
