@@ -11,9 +11,26 @@ if [ $# -ne 4 ]; then
 fi
 
 USER="$1"
+if [[ "$USER" =~ \  ]]; then
+  echo "[!] Le nom d'utilisateur ne doit pas contenir d'espaces."
+  exit 1
+fi
 PASS="$2"
+if [[ "$PASS" =~ \  ]]; then
+  echo "[!] Le mot de passe ne doit pas contenir d'espaces."
+  exit 1
+fi
 IP="$3"
+if ! [[ "$IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "[!] L'adresse IP n'est pas valide."
+  exit 1
+fi
 DOMAIN="$4"
+if [[ "$DOMAIN" =~ \  ]]; then
+  echo "[!] Le nom de domaine ne doit pas contenir d'espaces."
+  exit 1
+fi
+USERCONF="$USER.conf"
 USERDOMAIN="$USER.$DOMAIN"
 USERROOT="/srv/clients/$USER"
 WEBROOT="$USERROOT/www"
@@ -61,7 +78,7 @@ sudo chmod o+x /srv/clients
 sudo chmod o+x "$USERROOT"
 
 # Créer le VirtualHost Apache
-sudo tee /etc/httpd/conf.d/$USER.conf > /dev/null <<EOF
+sudo tee /etc/httpd/conf.d/$USERCONF > /dev/null <<EOF
 <VirtualHost *:80>
     ServerName $USERDOMAIN
     DocumentRoot $WEBROOT
