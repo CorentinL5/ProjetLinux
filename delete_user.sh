@@ -3,7 +3,7 @@
 # Usage : ./delete_user.sh <username>
 # Supprime proprement un utilisateur : Linux, base de données, FTP, Samba, Apache, fichiers
 
-MYSQL_ROOT_PWD='ptZfQ99wHYeIoUJfubigMg=='
+MYSQL_ROOT_PWD=$(cat /root/.mariadb_root_pass)
 
 set -e
 
