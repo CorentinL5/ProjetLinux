@@ -48,6 +48,7 @@ main_menu() {
 
 full_setup() {
   echo "[SETUP COMPLET] ➤ Lancement de toutes les installations..."
+  bash install_ssh.sh
   bash install_lvm.sh
   bash install_fw.sh
   bash install_web.sh "$DOMAIN"
@@ -72,6 +73,7 @@ service_menu() {
   while true; do
     clear
     echo "===== 🔧 INSTALLATION MANUELLE PAR SERVICE ====="
+    echo "0) SSH + Clé SSH"
     echo "1) LVM et quotas"
     echo "2) Firewall"
     echo "3) Apache + PHP"
@@ -93,6 +95,7 @@ service_menu() {
     read -p "Choix : " s
 
     case $s in
+      0) bash install_ssh.sh ;;
       1) bash install_lvm.sh ;;
       2) bash install_fw.sh ;;
       3) bash install_web.sh "$DOMAIN" ;;
