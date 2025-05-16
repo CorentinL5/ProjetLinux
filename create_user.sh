@@ -52,8 +52,6 @@ echo "$USER:$PASS" | sudo chpasswd
 echo "[+] Création des dossiers et attribution des droits"
 sudo mkdir -p "$WEBROOT" "$USERROOT/data"
 sudo chown -R "$USER":"$USER" "$USERROOT"
-sudo chown -R "$USER:$USER" "$WEBROOT"
-sudo chmod -R 755 "$WEBROOT"
 
 # 2. Appliquer quota utilisateur : 25 Mo
 echo "[+] Application du quota de 25 Mo"
@@ -70,8 +68,9 @@ echo "[+] Configuration Apache"
 sudo tee "$WEBROOT/index.html" > /dev/null <<< "<h1>Bienvenue $USER</h1>"
 
 # Appliquer les droits de fichiers
-sudo chown -R apache:apache "$WEBROOT"
-sudo chmod -R 755 "$WEBROOT"
+sudo usermod -a -G apache "$USER"
+sudo chown -R "$USER:apache" "$WEBROOT"
+sudo chmod -R 775 "$WEBROOT"
 sudo chmod 644 "$WEBROOT/index.html"
 
 # Corriger les permissions des dossiers parents pour Apache
