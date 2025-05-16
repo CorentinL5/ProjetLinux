@@ -49,9 +49,11 @@ echo "[+] Création de l'utilisateur Linux : $USER"
 sudo useradd -d "$USERROOT" -s /sbin/nologin "$USER"
 echo "$USER:$PASS" | sudo chpasswd
 
-echo "[+] Création des dossiers"
+echo "[+] Création des dossiers et attribution des droits"
 sudo mkdir -p "$WEBROOT" "$USERROOT/data"
 sudo chown -R "$USER":"$USER" "$USERROOT"
+sudo chown -R "$USER:$USER" "$WEBROOT"
+sudo chmod -R 755 "$WEBROOT"
 
 # 2. Appliquer quota utilisateur : 25 Mo
 echo "[+] Application du quota de 25 Mo"
