@@ -3,7 +3,7 @@
 # Usage : ./create_user.sh <username> <password> <ip>
 # Ex: ./create_user.sh client42 superpass 10.42.0.94
 
-MYSQL_ROOT_PWD='ptZfQ99wHYeIoUJfubigMg=='
+MYSQL_ROOT_PWD=$(cat /root/.mariadb_root_pass)
 
 if [ $# -ne 4 ]; then
   echo "Usage: $0 <username> <password> <ip> <domain>"
