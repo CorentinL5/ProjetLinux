@@ -14,6 +14,6 @@ echo "[CONFIG] ➤ Mise en exécution des scripts"
 sudo chmod +x /opt/ProjetLinux/scripts/*.sh
 
 echo "[CONFIG] ➤ Lancement du menu principal"
-cd /opt/ProjetLinux/scripts
+cd /opt/ProjetLinux/scripts/
 
 sudo /opt/ProjetLinux/scripts/master_install.sh
